@@ -338,9 +338,6 @@ body {
 }
 
 .panel__header {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.8rem;
   padding-bottom: 0.92rem;
   border-bottom: 1px solid var(--line);
   margin-bottom: 0.95rem;
@@ -357,23 +354,6 @@ body {
   margin-top: 0.3rem;
   font-size: 0.83rem;
   color: var(--ink-600);
-}
-
-.panel__icon {
-  width: 2rem;
-  height: 2rem;
-  border-radius: 0.65rem;
-  background: #132542;
-  color: #eff4ff;
-  display: grid;
-  place-items: center;
-  font-size: 0.82rem;
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
-.panel__icon--result {
-  background: #24406a;
 }
 
 .field-group + .field-group {
