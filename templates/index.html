@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Söz Varlığı | Terim Tespit Sistemi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <div class="bg-noise" aria-hidden="true"></div>
+
+  <header class="hero">
+    <div class="hero__beam" aria-hidden="true"></div>
+    <div class="container hero__inner">
+      <h1 class="hero__title">Öğrencilerin Söz Varlığının Tespiti Geliştirilmesi ve İzlenmesi Projesi</h1>
+      <div class="hero__meta">
+        <span class="badge badge--version">Model {{ model_version }}</span>
+        <span class="badge badge--status">Geliştirme Ortamı</span>
+        <button class="badge badge--about" id="about-toggle" type="button" aria-expanded="false" aria-controls="about-drawer">Model Hakkında</button>
+        <a class="hero__link" href="https://sozvarligi.meb.gov.tr" target="_blank" rel="noopener">sozvarligi.meb.gov.tr</a>
+      </div>
+
+      <div class="about-overlay" id="about-overlay" hidden>
+        <div class="about-card">
+          <button class="about-card__close" id="about-close" type="button" aria-label="Kapat">&times;</button>
+
+          <div class="about-card__header">
+            <span class="about-card__icon" aria-hidden="true">S</span>
+            <div>
+              <h3 class="about-card__title">Terim Tespit Sistemi</h3>
+              <p class="about-card__subtitle">Proje kapsamı ve yöntem</p>
+            </div>
+          </div>
+
+          <div class="about-card__divider"></div>
+
+          <div class="about-card__content">
+            <div class="about-card__section">
+              <h4>Proje</h4>
+              <p>Bu sistem, <strong>Öğrencilerin Söz Varlığının Tespiti Geliştirilmesi ve İzlenmesi Projesi</strong> kapsamında geliştirilmektedir. Akademik dilde terimler ve kavramlar söz varlığının önemli bir unsurudur.</p>
+            </div>
+
+            <div class="about-card__section">
+              <h4>Veri</h4>
+              <p>Çalışmada kullanılan veriler, Millî Eğitim Bakanlığı'nca onaylı ders kitaplarından elde edilmiştir. Farklı branş ve sınıf düzeylerindeki kitaplardan seçilen metin örnekleri, terim adaylarının işaretlenmesi için alan uzmanlarına sunulmuş ve denetimli bir etiketleme sürecinden geçirilmiştir.</p>
+            </div>
+
+            <div class="about-card__section">
+              <h4>Yöntem</h4>
+              <p>Etiketlenmiş veriler kullanılarak önceden eğitilmiş bir dil modeli, terim tanıma görevine uyarlanmıştır. Sistem, kendisine sunulan bir metindeki olası kavram ve terim adaylarını bağlamsal bilgiye dayanarak tespit etmektedir.</p>
+            </div>
+          </div>
+
+          <div class="about-card__divider"></div>
+
+          <p class="about-card__note">Sistemin çıktıları makine tahminidir; nihai değerlendirme alan uzmanının kararına bırakılmalıdır.</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container layout">
+    <section class="panel panel--input" aria-labelledby="analysis-title">
+      <div class="panel__header">
+        <div class="panel__icon" aria-hidden="true">A</div>
+        <div>
+          <h2 id="analysis-title">Terim Analizi</h2>
+          <p>Metin ve branş bilgisine göre terim adaylarını otomatik tespit eder.</p>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="branch-input">Alan / Branş / Bilim Dalı</label>
+        <div class="autocomplete">
+          <input
+            type="text"
+            id="branch-input"
+            autocomplete="off"
+            placeholder="Örn: Fizik, Türkçe, Bilişim Teknolojileri"
+            aria-autocomplete="list"
+            aria-controls="branch-list"
+            aria-expanded="false"
+          >
+          <div id="branch-list" class="typeahead-list" role="listbox"></div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="text-input">Metin</label>
+        <textarea id="text-input" placeholder="Analiz edilecek metni giriniz"></textarea>
+        <div class="field-meta">
+          <span id="char-count">0 karakter</span>
+          <span>Hızlı kısayol: Ctrl/Cmd + Enter</span>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button class="btn-primary" id="predict-btn" type="button">
+          <span class="spinner" aria-hidden="true"></span>
+          <span class="btn-label">Analizi Başlat</span>
+        </button>
+        <span id="request-info" class="request-info" aria-live="polite"></span>
+      </div>
+
+      <div id="error-msg" class="error-msg" role="alert"></div>
+    </section>
+
+    <section class="panel panel--result" id="result-card" aria-labelledby="result-title">
+      <div class="panel__header panel__header--result">
+        <div class="panel__icon panel__icon--result" aria-hidden="true">R</div>
+        <div>
+          <h2 id="result-title">Analiz Sonucu</h2>
+          <p>Metin içi işaretleme ve güven skorları</p>
+        </div>
+      </div>
+
+      <div id="empty-state" class="empty-state">
+        Henüz analiz yapılmadı. Bir branş seçip metin girerek başlayabilirsiniz.
+      </div>
+
+      <div id="result-content" class="result-content">
+        <div id="result-text" class="result-text"></div>
+
+        <div class="stats-grid" id="stats-grid">
+          <article class="stat-card">
+            <span class="stat-label">Terim Sayısı</span>
+            <strong id="stat-count">0</strong>
+          </article>
+          <article class="stat-card">
+            <span class="stat-label">Ortalama Güven</span>
+            <strong id="stat-score">0%</strong>
+          </article>
+          <article class="stat-card">
+            <span class="stat-label">Metin Kapsama</span>
+            <strong id="stat-coverage">0%</strong>
+          </article>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Terim</th>
+                <th>Aralık</th>
+                <th>Güven</th>
+              </tr>
+            </thead>
+            <tbody id="term-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span>Söz Varlığı Projesi</span>
+    <span class="dot" aria-hidden="true"></span>
+    <span>Terim Tespit Sistemi</span>
+  </footer>
+
+  <script>
+    window.APP_CONFIG = {
+      branches: {{ branches | tojson }},
+      labelConfig: {{ label_config | tojson }}
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+  <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+services:
+  berturk-ner:
+    build:
+      context: .
+    environment:
+      - LABEL_STUDIO_HOST=${LABEL_STUDIO_HOST:-http://localhost:8080}
+      - LABEL_STUDIO_API_KEY=${LABEL_STUDIO_API_KEY:-}
+      - MODEL_DIR=/app/model
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - WORKERS=${WORKERS:-1}
+      - THREADS=${THREADS:-4}
+    expose:
+      - "9090"
+    restart: unless-stopped
+    mem_limit: 4g
+    networks:
+      - dokploy-network
+    labels:
+      # ── Traefik routing ──────────────────────────────────
+      - "traefik.enable=true"
+
+      # HTTP router
+      - "traefik.http.routers.berturk-ner.rule=Host(`sozvarligi.meb.gov.tr`)"
+      - "traefik.http.routers.berturk-ner.entrypoints=web"
+      - "traefik.http.routers.berturk-ner.middlewares=redirect-to-https@docker"
+
+      # HTTPS router
+      - "traefik.http.routers.berturk-ner-secure.rule=Host(`sozvarligi.meb.gov.tr`)"
+      - "traefik.http.routers.berturk-ner-secure.entrypoints=websecure"
+      - "traefik.http.routers.berturk-ner-secure.tls=true"
+      - "traefik.http.routers.berturk-ner-secure.tls.certresolver=letsencrypt"
+
+      # Service port
+      - "traefik.http.services.berturk-ner.loadbalancer.server.port=9090"
+
+      # HTTP → HTTPS redirect middleware
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=true"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:9090/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+
+networks:
+  dokploy-network:
+    external: true

@@ -1,0 +1,8 @@
+__pycache__
+*.pyc
+.env
+.git
+*.md
+venv/
+.DS_Store
+test_local.py
