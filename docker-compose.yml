@@ -6,6 +6,8 @@ services:
       - LABEL_STUDIO_HOST=${LABEL_STUDIO_HOST:-http://localhost:8080}
       - LABEL_STUDIO_API_KEY=${LABEL_STUDIO_API_KEY:-}
       - MODEL_DIR=/app/model
+      - HF_REPO_ID=${HF_REPO_ID:-ekismet/TerimTespitModeli}
+      - HF_TOKEN=${HF_TOKEN:-}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
       - WORKERS=${WORKERS:-1}
       - THREADS=${THREADS:-4}
