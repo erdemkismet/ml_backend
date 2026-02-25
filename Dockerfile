@@ -7,21 +7,19 @@ ENV PYTHONUNBUFFERED=1 \
     PORT=9090 \
     WORKERS=1 \
     THREADS=4 \
-    MODEL_DIR=/app/model
+    MODEL_DIR=/app/model \
+    HF_REPO_ID=ekismet/TerimTespitModeli
 
-# Flask + gunicorn (no git needed — SDK removed)
+# Flask + gunicorn
 COPY requirements-base.txt .
 RUN pip install --no-cache-dir -r requirements-base.txt
 
-# torch (CPU) + transformers
+# torch (CPU) + transformers + huggingface_hub
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Model weights (~420 MB) — cached Docker layer
-COPY model/ /app/model/
-
 # App code
-COPY model.py _wsgi.py branch_catalog.py dual_head_model.py ./
+COPY model.py _wsgi.py branch_catalog.py dual_head_model.py model_loader.py ./
 COPY templates/ /app/templates/
 COPY static/ /app/static/
 

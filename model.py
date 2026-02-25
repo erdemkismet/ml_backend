@@ -23,6 +23,7 @@ logger = logging.getLogger(__name__)
 
 MODEL_DIR = os.getenv("MODEL_DIR", "")  # resolved in load_model()
 MODEL_VERSION = "v018"
+HF_REPO_ID = os.getenv("HF_REPO_ID", "ekismet/TerimTespitModeli")
 MAX_LENGTH = 512
 DEFAULT_SCORE_THRESHOLD = 0.70
 
@@ -107,7 +108,11 @@ def load_model():
 
 
 def _resolve_model_dir():
-    """Resolve MODEL_DIR with sensible fallbacks for local / container use."""
+    """Resolve MODEL_DIR with sensible fallbacks for local / container use.
+
+    If no local model is found, downloads from HuggingFace Hub using
+    HF_REPO_ID and HF_TOKEN environment variables.
+    """
     candidates = [
         MODEL_DIR,           # env var or explicit
         "/app/model",        # Docker default
@@ -119,12 +124,23 @@ def _resolve_model_dir():
         ):
             return path
 
-    checked = [c for c in candidates if c]
-    raise FileNotFoundError(
-        f"Model not found. Checked: {checked}. "
-        "Set MODEL_DIR env var to the directory containing config.json "
-        "and model.safetensors."
-    )
+    # No local model found → download from HuggingFace Hub
+    target_dir = MODEL_DIR or "/app/model"
+    logger.info("Model not found locally. Downloading from HF: %s → %s", HF_REPO_ID, target_dir)
+
+    try:
+        from huggingface_hub import snapshot_download
+        token = os.getenv("HF_TOKEN") or None
+        snapshot_download(HF_REPO_ID, local_dir=target_dir, token=token)
+        logger.info("Model downloaded successfully to %s", target_dir)
+        return target_dir
+    except Exception as exc:
+        checked = [c for c in candidates if c]
+        raise FileNotFoundError(
+            f"Model not found locally ({checked}) and HF download failed: {exc}. "
+            "Set MODEL_DIR to an existing model directory, or set HF_REPO_ID and "
+            "HF_TOKEN environment variables for automatic download."
+        ) from exc
 
 
 # ── Public API ────────────────────────────────────────────────────
