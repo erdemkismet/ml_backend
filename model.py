@@ -131,6 +131,7 @@ def _resolve_model_dir():
     try:
         from huggingface_hub import snapshot_download
         token = os.getenv("HF_TOKEN") or None
+        logger.info("HF_TOKEN present: %s (len=%d)", token is not None, len(token) if token else 0)
         snapshot_download(HF_REPO_ID, local_dir=target_dir, token=token)
         logger.info("Model downloaded successfully to %s", target_dir)
         return target_dir
