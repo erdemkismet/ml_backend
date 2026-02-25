@@ -94,6 +94,20 @@
     return div.innerHTML;
   }
 
+  function formatPlainChunk(text) {
+    return text.split("\n").map(function (line, i) {
+      var br = i > 0 ? "<br>" : "";
+      var m = line.match(/^(#{1,3})\s+(.*)/);
+      if (m) {
+        return br + '<span class="md-h' + m[1].length + '">' + escapeHtml(m[2]) + "</span>";
+      }
+      // **bold**
+      var escaped = escapeHtml(line);
+      escaped = escaped.replace(/\*\*(.+?)\*\*/g, '<span class="md-bold">$1</span>');
+      return br + escaped;
+    }).join("");
+  }
+
   function formatPercent(value) {
     return `${(Math.max(0, value) * 100).toFixed(1)}%`;
   }
@@ -253,7 +267,7 @@
 
   function renderTextHighlights(text, entities) {
     if (!entities.length) {
-      resultText.textContent = text;
+      resultText.innerHTML = formatPlainChunk(text);
       return;
     }
 
@@ -262,7 +276,7 @@
 
     entities.forEach((entity) => {
       if (entity.start > cursor) {
-        chunks.push(escapeHtml(text.slice(cursor, entity.start)));
+        chunks.push(formatPlainChunk(text.slice(cursor, entity.start)));
       }
 
       const term = text.slice(entity.start, entity.end);
@@ -273,7 +287,7 @@
     });
 
     if (cursor < text.length) {
-      chunks.push(escapeHtml(text.slice(cursor)));
+      chunks.push(formatPlainChunk(text.slice(cursor)));
     }
 
     resultText.innerHTML = chunks.join("");
@@ -323,18 +337,34 @@
 
     function addPlain(str) {
       if (!str) return;
-      const words = splitWords(str);
-      if (!words.length) {
-        fragment.appendChild(document.createTextNode(str));
-        return;
-      }
-      for (const word of words) {
-        const span = document.createElement("span");
-        span.className = "tw";
-        span.textContent = word;
-        fragment.appendChild(span);
-        allWords.push({ el: span, type: "plain" });
-      }
+      const lines = str.split("\n");
+      lines.forEach(function (line, lineIdx) {
+        if (lineIdx > 0) {
+          fragment.appendChild(document.createElement("br"));
+        }
+        if (!line) return;
+
+        var textToProcess = line;
+        var wrapper = null;
+        var headingMatch = line.match(/^(#{1,3})\s+(.*)/);
+        if (headingMatch) {
+          wrapper = document.createElement("span");
+          wrapper.className = "md-h" + headingMatch[1].length;
+          fragment.appendChild(wrapper);
+          textToProcess = headingMatch[2];
+        }
+
+        var target = wrapper || fragment;
+        var words = splitWords(textToProcess);
+        if (!words.length) return;
+        for (var w = 0; w < words.length; w++) {
+          var span = document.createElement("span");
+          span.className = "tw";
+          span.textContent = words[w];
+          target.appendChild(span);
+          allWords.push({ el: span, type: "plain" });
+        }
+      });
     }
 
     for (const entity of entities) {

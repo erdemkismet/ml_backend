@@ -389,7 +389,7 @@ input[type="text"] {
 
 textarea {
   resize: vertical;
-  min-height: 10.5rem;
+  min-height: 18rem;
   padding: 0.75rem 0.9rem;
   font-size: 0.9rem;
 }
@@ -571,6 +571,26 @@ textarea::placeholder {
   border-radius: var(--radius-md);
   word-break: break-word;
 }
+
+.result-text .md-h1,
+.result-text .md-h2,
+.result-text .md-h3 {
+  display: block;
+  font-family: "Fraunces", Georgia, serif;
+  color: var(--ink-900);
+  margin: 0.7rem 0 0.3rem;
+  line-height: 1.35;
+}
+.result-text .md-h1:first-child,
+.result-text .md-h2:first-child,
+.result-text .md-h3:first-child {
+  margin-top: 0;
+}
+.result-text .md-h1 { font-size: 1.28rem; font-weight: 650; }
+.result-text .md-h2 { font-size: 1.1rem; font-weight: 620; }
+.result-text .md-h3 { font-size: 0.98rem; font-weight: 600; }
+
+.result-text .md-bold { font-weight: 700; }
 
 .result-text mark {
   background: rgba(163, 115, 34, 0.18);
