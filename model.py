@@ -22,7 +22,7 @@ from transformers import AutoTokenizer, AutoModelForTokenClassification
 logger = logging.getLogger(__name__)
 
 MODEL_DIR = os.getenv("MODEL_DIR", "")  # resolved in load_model()
-MODEL_VERSION = "v018"
+MODEL_VERSION = "v019"
 HF_REPO_ID = os.getenv("HF_REPO_ID", "ekismet/TerimTespitModeli")
 MAX_LENGTH = 512
 DEFAULT_SCORE_THRESHOLD = 0.70
