@@ -36,12 +36,14 @@
   if (aboutToggle && aboutOverlay) {
     function openAbout() {
       aboutOverlay.hidden = false;
+      document.body.style.overflow = "hidden";
       requestAnimationFrame(() => { aboutOverlay.classList.add("is-open"); });
       aboutToggle.setAttribute("aria-expanded", "true");
     }
     function closeAbout() {
       aboutOverlay.classList.remove("is-open");
       aboutToggle.setAttribute("aria-expanded", "false");
+      document.body.style.overflow = "";
       setTimeout(() => { aboutOverlay.hidden = true; }, 300);
     }
     aboutToggle.addEventListener("click", openAbout);

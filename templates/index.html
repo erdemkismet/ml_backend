@@ -23,44 +23,45 @@
         <a class="hero__link" href="https://sozvarligi.meb.gov.tr" target="_blank" rel="noopener">sozvarligi.meb.gov.tr</a>
       </div>
 
-      <div class="about-overlay" id="about-overlay" hidden>
-        <div class="about-card">
-          <button class="about-card__close" id="about-close" type="button" aria-label="Kapat">&times;</button>
-
-          <div class="about-card__header">
-            <span class="about-card__icon" aria-hidden="true">S</span>
-            <div>
-              <h3 class="about-card__title">Terim Tespit Modeli</h3>
-              <p class="about-card__subtitle">Proje kapsamı ve yöntem</p>
-            </div>
-          </div>
-
-          <div class="about-card__divider"></div>
-
-          <div class="about-card__content">
-            <div class="about-card__section">
-              <h4>Proje</h4>
-              <p>Bu sistem, <strong>Öğrencilerin Söz Varlığının Tespiti Geliştirilmesi ve İzlenmesi Projesi</strong> kapsamında geliştirilmektedir. Akademik dilde terimler ve kavramlar söz varlığının önemli bir unsurudur.</p>
-            </div>
-
-            <div class="about-card__section">
-              <h4>Veri</h4>
-              <p>Çalışmada kullanılan veriler, Millî Eğitim Bakanlığı'nca onaylı ders kitaplarından elde edilmiştir. Farklı branş ve sınıf düzeylerindeki kitaplardan seçilen metin örnekleri, terim adaylarının işaretlenmesi için alan uzmanlarına sunulmuş ve denetimli bir etiketleme sürecinden geçirilmiştir.</p>
-            </div>
-
-            <div class="about-card__section">
-              <h4>Yöntem</h4>
-              <p>Etiketlenmiş veriler kullanılarak önceden eğitilmiş bir dil modeli, terim tanıma görevine uyarlanmıştır. Sistem, kendisine sunulan bir metindeki olası kavram ve terim adaylarını bağlamsal bilgiye dayanarak tespit etmektedir.</p>
-            </div>
-          </div>
-
-          <div class="about-card__divider"></div>
-
-          <p class="about-card__note">Sistemin çıktıları makine tahminidir; nihai değerlendirme alan uzmanının kararına bırakılmalıdır.</p>
-        </div>
-      </div>
     </div>
   </header>
+
+  <div class="about-overlay" id="about-overlay" hidden>
+    <div class="about-card">
+      <button class="about-card__close" id="about-close" type="button" aria-label="Kapat">&times;</button>
+
+      <div class="about-card__header">
+        <span class="about-card__icon" aria-hidden="true">S</span>
+        <div>
+          <h3 class="about-card__title">Terim Tespit Modeli</h3>
+          <p class="about-card__subtitle">Proje kapsamı ve yöntem</p>
+        </div>
+      </div>
+
+      <div class="about-card__divider"></div>
+
+      <div class="about-card__content">
+        <div class="about-card__section">
+          <h4>Proje</h4>
+          <p>Bu sistem, <strong>Öğrencilerin Söz Varlığının Tespiti Geliştirilmesi ve İzlenmesi Projesi</strong> kapsamında geliştirilmektedir. Akademik dilde terimler ve kavramlar söz varlığının önemli bir unsurudur.</p>
+        </div>
+
+        <div class="about-card__section">
+          <h4>Veri</h4>
+          <p>Çalışmada kullanılan veriler, Millî Eğitim Bakanlığı'nca onaylı ders kitaplarından elde edilmiştir. Farklı branş ve sınıf düzeylerindeki kitaplardan seçilen metin örnekleri, terim adaylarının işaretlenmesi için alan uzmanlarına sunulmuş ve denetimli bir etiketleme sürecinden geçirilmiştir.</p>
+        </div>
+
+        <div class="about-card__section">
+          <h4>Yöntem</h4>
+          <p>Etiketlenmiş veriler kullanılarak önceden eğitilmiş bir dil modeli, terim tanıma görevine uyarlanmıştır. Sistem, kendisine sunulan bir metindeki olası kavram ve terim adaylarını bağlamsal bilgiye dayanarak tespit etmektedir.</p>
+        </div>
+      </div>
+
+      <div class="about-card__divider"></div>
+
+      <p class="about-card__note">Sistemin çıktıları makine tahminidir; nihai değerlendirme alan uzmanının kararına bırakılmalıdır.</p>
+    </div>
+  </div>
 
   <main class="container layout">
     <section class="panel panel--input" aria-labelledby="analysis-title">
@@ -134,17 +135,19 @@
         </div>
 
         <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Terim</th>
-                <th>Aralık</th>
-                <th>Güven</th>
-              </tr>
-            </thead>
-            <tbody id="term-table-body"></tbody>
-          </table>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Terim</th>
+                  <th>Aralık</th>
+                  <th>Güven</th>
+                </tr>
+              </thead>
+              <tbody id="term-table-body"></tbody>
+            </table>
+          </div>
         </div>
       </div>
     </section>
