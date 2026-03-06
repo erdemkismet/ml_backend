@@ -8,13 +8,15 @@ services:
       - MODEL_DIR=/app/model
       - HF_REPO_ID=${HF_REPO_ID:-ekismet/TerimTespitModeli}
       - HF_TOKEN=${HF_TOKEN:-}
+      - NER_MODEL_DIR=/app/ner_model
+      - NER_HF_REPO_ID=${NER_HF_REPO_ID:-akdeniz27/bert-base-turkish-cased-ner}
       - LOG_LEVEL=${LOG_LEVEL:-INFO}
       - WORKERS=${WORKERS:-1}
       - THREADS=${THREADS:-4}
     expose:
       - "9090"
     restart: unless-stopped
-    mem_limit: 4g
+    mem_limit: 6g
     networks:
       - dokploy-network
     labels:
@@ -43,7 +45,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 120s
+      start_period: 180s
 
 networks:
   dokploy-network:

@@ -8,7 +8,9 @@ ENV PYTHONUNBUFFERED=1 \
     WORKERS=1 \
     THREADS=4 \
     MODEL_DIR=/app/model \
-    HF_REPO_ID=ekismet/TerimTespitModeli
+    HF_REPO_ID=ekismet/TerimTespitModeli \
+    NER_MODEL_DIR=/app/ner_model \
+    NER_HF_REPO_ID=akdeniz27/bert-base-turkish-cased-ner
 
 # Flask + gunicorn
 COPY requirements-base.txt .
@@ -19,7 +21,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # App code
-COPY model.py _wsgi.py branch_catalog.py dual_head_model.py model_loader.py ./
+COPY model.py ner_model.py _wsgi.py branch_catalog.py dual_head_model.py model_loader.py ./
 COPY templates/ /app/templates/
 COPY static/ /app/static/
 

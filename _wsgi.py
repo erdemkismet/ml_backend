@@ -9,6 +9,11 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 from branch_catalog import BRANCHES
 from model import MODEL_VERSION, load_model, predict_tasks
+from ner_model import (
+    NER_MODEL_VERSION,
+    load_ner_model,
+    predict_tasks as ner_predict_tasks,
+)
 
 
 logging.config.dictConfig(
@@ -50,8 +55,9 @@ app.config["JSON_AS_ASCII"] = False
 if hasattr(app, "json"):
     app.json.ensure_ascii = False
 
-# Load model once at startup (shared with workers when preloaded by gunicorn)
+# Load models once at startup (shared with workers when preloaded by gunicorn)
 load_model()
+load_ner_model()
 
 
 def _get_json_body():
@@ -61,7 +67,7 @@ def _get_json_body():
 
 @app.route("/health", methods=["GET"])
 def health():
-    return jsonify({"status": "UP", "model_version": MODEL_VERSION})
+    return jsonify({"status": "UP", "model_version": MODEL_VERSION, "ner_model_version": NER_MODEL_VERSION})
 
 
 @app.route("/", methods=["GET"])
@@ -115,6 +121,47 @@ def webhook():
 @app.route("/versions", methods=["POST"])
 def versions():
     return jsonify({"versions": [MODEL_VERSION]})
+
+
+# ── NER (PER / LOC / ORG) endpoints ──────────────────────────────
+
+
+@app.route("/ner/setup", methods=["POST"])
+def ner_setup():
+    data = _get_json_body()
+    logger.info("NER setup called — project=%s", data.get("project"))
+    return jsonify({"model_version": NER_MODEL_VERSION})
+
+
+@app.route("/ner/predict", methods=["POST"])
+def ner_predict():
+    data = _get_json_body()
+    tasks = data.get("tasks")
+    label_config = data.get("label_config")
+    score_threshold = data.get("score_threshold")
+
+    if not isinstance(tasks, list) or not tasks:
+        return jsonify({"error": "No tasks provided"}), 400
+
+    predictions = ner_predict_tasks(
+        tasks,
+        label_config,
+        score_threshold=score_threshold,
+    )
+    return jsonify({"results": predictions, "model_version": NER_MODEL_VERSION})
+
+
+@app.route("/ner/webhook", methods=["POST"])
+def ner_webhook():
+    data = _get_json_body()
+    event = data.get("action", "unknown")
+    logger.info("NER webhook event: %s", event)
+    return jsonify({"status": "ok"}), 201
+
+
+@app.route("/ner/versions", methods=["POST"])
+def ner_versions():
+    return jsonify({"versions": [NER_MODEL_VERSION]})
 
 
 @app.before_request
